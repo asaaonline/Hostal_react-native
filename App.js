@@ -7,14 +7,32 @@
  */
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import {createStackNavigator} from 'react-navigation';
+import {StackNavigator,createBottomTabNavigator} from 'react-navigation';
 import home from './src/home/home';
 import Login from './src/login/login';
+import SettingsScreen from './src/settings/setting';
 
-const Application=createStackNavigator({
-  Home:{screen:Login},
-  main:{screen:home},
-},{
+const Application=StackNavigator({
+
+  loginFlow: { 
+    screen: StackNavigator({
+      Home: { screen: Login },
+      main: { screen:createBottomTabNavigator({
+              we:{screen:home},
+              setting:{screen:SettingsScreen}
+      })
+      
+      },
+    },{
+      headerMode: 'none',
+      navigationOptions: {
+          headerVisible: false,
+      }
+    }
+    )
+  }
+}
+,{
   headerMode: 'none',
   navigationOptions: {
       headerVisible: false,

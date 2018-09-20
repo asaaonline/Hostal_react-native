@@ -4,13 +4,15 @@ import styles from "./style";
 import {Keyboard, Text, View, TextInput, TouchableWithoutFeedback, Alert, KeyboardAvoidingView} from 'react-native';
 import { Button } from 'react-native-elements';
 import {StackNavigator} from 'react-navigation';
+import { AsyncStorage } from "react-native";
+
 
 export default class LoginScreen extends Component {
  constructor(props){
    super(props);
    this.state= {
-     username:'',
-     password:'',
+     username:null,
+     password:null,
    }
  }
   render() {
@@ -38,16 +40,30 @@ export default class LoginScreen extends Component {
   }
 
   componentDidMount() {
+    this._loadInitialState().done();
   }
 
   componentWillUnmount() {
+   
+    
+  }
+  _loadInitialState=async () =>{
+
+    var value=await AsyncStorage.getItem('user');
+    console.log("value");
+    console.log(value);
+    if(value!=='null'){
+      this.props.navigation.navigate('we');
+    }else{
+      this.props.navigation.navigate('Home');
+    }
   }
 
   onLoginPress() {
     
     console.log("tauched");
    
-      fetch("http://192.168.1.102:4000/mobile/login"
+      fetch("http://192.168.1.103:4000/mobile/login"
       ,{
         method:'POST',
         headers:{
@@ -62,9 +78,11 @@ export default class LoginScreen extends Component {
       .then((response)=>response.json())
       .then((responseJson)=>{
         console.log(responseJson);
+        console.log(responseJson.name);
         if(responseJson.status=='correct'){
           console.log("nevigate");
-          this.props.navigation.navigate('main');
+          AsyncStorage.setItem('user',responseJson.name);
+          this.props.navigation.navigate('we');
         }else{
           alert("wrong password or username")
           console.log("do not navigate");
